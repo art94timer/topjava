@@ -23,38 +23,40 @@ public class JdbcMealRepository implements MealRepository {
 	private static final String DELETE_SQL = "DELETE FROM meals WHERE id = :id AND user_id = :user_id";
 	private static final String UPDATE_SQL = "UPDATE meals SET date_time = :date_time, description = :description, calories = :calories WHERE id =:id AND user_id = :user_id";
 	private final SimpleJdbcInsert insertMeal;
-	
+
 	private final NamedParameterJdbcTemplate jdbcTemplate;
 
 	public JdbcMealRepository(NamedParameterJdbcTemplate namedJdbcTemplate) {
-    this.jdbcTemplate = namedJdbcTemplate;
-	  this.insertMeal = new SimpleJdbcInsert(namedJdbcTemplate.getJdbcTemplate())
-		    .withTableName("meals")
-		    .usingGeneratedKeyColumns("id");
+		this.jdbcTemplate = namedJdbcTemplate;
+		this.insertMeal = new SimpleJdbcInsert(
+				namedJdbcTemplate.getJdbcTemplate()).withTableName("meals")
+				.usingGeneratedKeyColumns("id");
 	}
 
 	@Override
 	public Meal save(Meal meal, int userId) {
-    if (meal.isNew()) {
-      Number newIdNumber = insertMeal.executeAndReturnKey(fillMealNamedParams(meal, userId));
-      meal.setId(newIdNumber.intValue());
-    } else {
-      jdbcTemplate.update(UPDATE_SQL, fillMealNamedParams(meal, userId));
-    }
-	  
+		if (meal.isNew()) {
+			Number newIdNumber = insertMeal
+					.executeAndReturnKey(fillMealNamedParams(meal, userId));
+			meal.setId(newIdNumber.intValue());
+		} else {
+			jdbcTemplate.update(UPDATE_SQL, fillMealNamedParams(meal, userId));
+		}
+
 		return meal;
 	}
 
 	@Override
 	public boolean delete(int id, int userId) {
-		int updatedRows = jdbcTemplate.update(DELETE_SQL, Map.of("id", id, "user_id", userId));
+		int updatedRows = jdbcTemplate.update(DELETE_SQL,
+				Map.of("id", id, "user_id", userId));
 		return updatedRows != 0;
 	}
 
 	@Override
 	public Meal get(int id, int userId) {
-		List<Meal> result = jdbcTemplate.query(SELECT_SQL_BY_ID_AND_USERID, Map.of("id", id, "user_id", userId),
-				new MealRowMapper());
+		List<Meal> result = jdbcTemplate.query(SELECT_SQL_BY_ID_AND_USERID,
+				Map.of("id", id, "user_id", userId), new MealRowMapper());
 		if (result.size() > 1) {
 			throw new RuntimeException("Non unique result");
 		}
@@ -63,14 +65,18 @@ public class JdbcMealRepository implements MealRepository {
 
 	@Override
 	public List<Meal> getAll(int userId) {
-		return jdbcTemplate.query(SELECT_BY_USERID, Map.of("user_id", userId), new MealRowMapper());
+		return jdbcTemplate.query(SELECT_BY_USERID, Map.of("user_id", userId),
+				new MealRowMapper());
 	}
 
 	@Override
-	public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-		return jdbcTemplate.query(SELECT_BETWEEN_DATE_TIME_AND_USERID,
-				Map.of("user_id", userId, "startDateTime", startDateTime, "endDateTime", endDateTime),
-				new MealRowMapper());
+	public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime,
+			LocalDateTime endDateTime, int userId) {
+		return jdbcTemplate
+				.query(SELECT_BETWEEN_DATE_TIME_AND_USERID,
+						Map.of("user_id", userId, "startDateTime",
+								startDateTime, "endDateTime", endDateTime),
+						new MealRowMapper());
 	}
 
 	private Map<String, Object> fillMealNamedParams(Meal meal, int userId) {
