@@ -13,7 +13,6 @@
     <hr/>
     <h2>Meals</h2>
     <form method="get" action="meals">
-        <input type="hidden" name="action" value="filter">
         <dl>
             <dt>From Date (inclusive):</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -33,7 +32,7 @@
         <button type="submit">Filter</button>
     </form>
     <hr/>
-    <a href="meals?action=create">Add Meal</a>
+    <a href="meals">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -56,8 +55,15 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals?action=update&id=${meal.id}">Update</a></td>
-                <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
+                <td><form id="upd" method="post" action="/topjava/meals/edit">
+                    <input type="hidden" name="id" value="${meal.id}">
+                    <button form="upd" type="submit">Update</button>
+                </form>
+                    </td>
+                <td><form id="del" method="post" action="/topjava/meals/delete">
+                    <input type="hidden" name="id" value="${meal.id}">
+                    <button type="submit" form="del">Delete</button>
+                </form></td>
             </tr>
         </c:forEach>
     </table>

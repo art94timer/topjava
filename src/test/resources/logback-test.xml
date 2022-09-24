@@ -20,6 +20,8 @@
     <logger name="result" level="INFO" additivity="false">
         <appender-ref ref="result"/>
     </logger>
+    <logger name="org.springframework.jdbc.core.JdbcTemplate" level="debug"/>
+    <logger name="org.hibernate.cache" level="debug"/>
 
 <!--    <logger name="org.postgresql" level="debug"/>-->
 <!--    <logger name="org.springframework.jdbc" level="info"/>-->
