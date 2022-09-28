@@ -91,6 +91,14 @@
                         </dependencies>
                     </container>
                     <configuration>
+                        <properties>
+                            <cargo.start.jvmargs>
+                                -Xdebug
+                                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
+                                -Xnoagent
+                                -Djava.compiler=NONE
+                            </cargo.start.jvmargs>
+                        </properties>
                         <configfiles>
                             <configfile>
                                 <file>src/main/resources/tomcat/context.xml</file>
@@ -245,6 +253,13 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
             <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.skyscreamer/jsonassert -->
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>1.5.1</version>
             <scope>test</scope>
         </dependency>
 
