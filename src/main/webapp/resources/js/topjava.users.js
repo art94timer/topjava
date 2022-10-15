@@ -45,3 +45,16 @@ $(function () {
         })
     );
 });
+
+$(function () {
+    $(".enabled").click(function () {
+        const enabled = $(this).is(":checked");
+        const userId = $(this).closest('tr').attr("id");
+        $.ajax({
+            url: userAjaxUrl + userId + "/" + enabled,
+            type: "PUT"
+        }).done(function () {
+            updateTable();
+        });
+    })
+})
