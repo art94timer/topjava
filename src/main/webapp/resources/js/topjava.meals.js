@@ -17,14 +17,57 @@ function clearFilter() {
     $.get(mealAjaxUrl, updateTableByData);
 }
 
+$.ajaxSetup({
+    converters: {
+        "text json": function (result) {
+            // Какие то действия
+            const obj = JSON.parse(result);
+            $.each(obj, () => {
+                if (this.hasOwnProperty('dateTime')) {
+                    this.dateTime = this.dateTime.replace('T', ' ');
+                }
+            })
+
+            return obj;
+        }
+    }
+});
+$("#startDate").datetimepicker({
+    timepicker: false,
+    format: 'Y-m-d'
+})
+$("#endDate").datetimepicker({
+    timepicker: false,
+    format: 'Y-m-d'
+})
+$("#startTime").datetimepicker({
+    datepicker: false,
+    format: 'H:i'
+})
+$("#endTime").datetimepicker({
+    datepicker: false,
+    format: 'H:i'
+})
+$("#dateTime").datetimepicker({
+    format: 'Y-m-d H:i'
+})
+
+
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
+            "ajax": {
+                "url": mealAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime"
+                    "data": "dateTime",
+                    "render": function (data) {
+                        return data.replace('T', ' ');
+                    }
                 },
                 {
                     "data": "description"
@@ -33,12 +76,15 @@ $(function () {
                     "data": "calories"
                 },
                 {
-                    "defaultContent": "Edit",
-                    "orderable": false
+                    "defaultContent": "",
+                    "orderable": false,
+                    "render": renderEditBtn
+
                 },
                 {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                    "defaultContent": "",
+                    "orderable": false,
+                    "render": renderDeleteBtn
                 }
             ],
             "order": [
@@ -46,7 +92,10 @@ $(function () {
                     0,
                     "desc"
                 ]
-            ]
+            ],
+            "createdRow": function (row, data, dataIndex) {
+                $(row).attr("data-meal-excess", !data['excess']);
+            }
         })
     );
 });
