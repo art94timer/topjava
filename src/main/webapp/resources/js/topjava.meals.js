@@ -10,7 +10,7 @@ const ctx = {
             data: $("#filter").serialize()
         }).done(updateTableByData);
     }
-}
+};
 
 function clearFilter() {
     $("#filter")[0].reset();
@@ -67,6 +67,8 @@ $(function () {
             $(row).attr("data-meal-excess", data.excess);
         }
     });
+
+    $.datetimepicker.setLocale(localeCode);
 
 //  http://xdsoft.net/jqplugins/datetimepicker/
     var startDate = $('#startDate');
